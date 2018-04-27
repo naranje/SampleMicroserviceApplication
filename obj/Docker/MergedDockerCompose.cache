@@ -1,0 +1,33 @@
+networks:
+  default:
+    external:
+      name: nat
+services:
+  apigateway:
+    build:
+      context: C:\Users\mirann\Dev\QuadrusLibraryMicroservices
+      dockerfile: ApiGateway\Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: apigateway
+    ports:
+    - 80/tcp
+  bookrequest:
+    build:
+      context: C:\Users\mirann\Dev\QuadrusLibraryMicroservices
+      dockerfile: BookRequest\Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: bookrequest
+    ports:
+    - 80/tcp
+  librarycatalog:
+    build:
+      context: C:\Users\mirann\Dev\QuadrusLibraryMicroservices
+      dockerfile: LibraryCatalog\Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: librarycatalog
+    ports:
+    - 80/tcp
+version: '3.0'

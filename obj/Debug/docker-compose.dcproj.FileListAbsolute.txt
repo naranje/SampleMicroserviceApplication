@@ -1,0 +1,1 @@
+C:\Users\mirann\Dev\QuadrusLibraryMicroservices\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" 
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 
+integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" 
+crossorigin="anonymous">
+<title>Quadrus Library</title>
+</head>
+<body>
+<div class="container">
+<div class="page-header"><h1>Quadrus Library<small> - Latest Books</small></h1></div>
+<div class="row">
+<div class="col-md-8">
+  @Each.BookList 
+  <div class="row" style="background-color: #eee; border-bottom-style: solid">
+    <div class="col-md-8">
+      <h4>@Current.Title</h4>
+      <p>@Current.SummaryHtml</p>
+    </div>
+    <div class="col-md-4"><p></p><button class="btn btn-primary" type="button" onclick="request('@Current.Id');">Reserve</button></div>
+  </div>
+  @EndEach
+</div>
+<div class="col-md-4">
+  <div class="panel panel-info">
+    <div class="panel-heading">Reserved Books</div>
+    <div class="panel-body">
+      @Each.RequestBooks
+        <div>
+          @Current.Title
+          <button class="btn btn-link" onclick="removeFromRequest('@Current.Id');">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          </button>
+        </div>
+      @EndEach
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</body>
+<script>
+function request(bookCatalogId) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.write(xhttp.responseText);
+      document.close();
+    }
+  }
+  xhttp.open('POST', '/bookrequest/1', true);
+  xhttp.setRequestHeader('Content-type', 'application/json');
+  xhttp.send(JSON.stringify(bookCatalogId));
+}
+
+function removeFromRequest(bookCatalogId) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.write(xhttp.responseText);
+      document.close();
+    }
+  }
+  xhttp.open('DELETE', '/bookrequest/1', true);
+  xhttp.setRequestHeader('Content-type', 'application/json');
+  xhttp.send(JSON.stringify(bookCatalogId));
+}
+</script>
+</html>
