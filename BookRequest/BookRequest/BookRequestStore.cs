@@ -7,41 +7,15 @@ namespace BookRequest.BookRequest
 {
     public class BookRequestStore : IBookRequestStore
     {
-        //TODO: Store this in config.
-        private readonly string connectionString =
-            @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookRequest;Integrated Security=True;Connect Timeout=600;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-
-        private const string ReadCartSql =
-            @"select Id, UserId  from BookRequest
-where UserId=@UserId";
-
-        private const string ReadItemsSql =
-            @"select BookRequestItems.BookRequestId, BookRequestItems.BookCatalogId, BookRequestItems.Title from BookRequest, BookRequestItems
-where BookRequestItems.BookRequestId = BookRequest.ID
-and BookRequest.UserId=@UserId";
-
-        private const string DeleteAllForBookRequestSql =
-            @"delete item from BookRequestItems item
-inner join BookRequest cart on item.BookRequestId = cart.ID
-and cart.UserId=@UserId";
-
-        private const string AddAllForBookRequestSql =
-            @"insert into BookRequestItems 
-(BookRequestId, BookCatalogId, Title)
-values 
-(@BookRequestId, @BookCatalogId, @Title)";
-
-
         public async Task<BookRequest> Get(int userId)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(EnvironmentVariables.ConnectionString))
             {
-                var bookRequest = await conn.QueryFirstAsync<BookRequest>(ReadCartSql,
+                var bookRequest = await conn.QueryFirstAsync<BookRequest>(Repository.ReadCartSql,
                     new {UserId = userId});
 
                 var currentBookRequestItems = await
-                    conn.QueryAsync<BookRequestItem>(
-                        ReadItemsSql,
+                    conn.QueryAsync<BookRequestItem>(Repository.ReadItemsSql,
                         new {UserId = userId});
 
                 return new BookRequest(userId, bookRequest.BookRequestId, currentBookRequestItems);
@@ -50,20 +24,18 @@ values
 
         public async Task Save(BookRequest bookRequest)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(EnvironmentVariables.ConnectionString))
             {
                 conn.Open();
                 using (var tx = conn.BeginTransaction())
                 {
                     try
                     {
-                        await conn.ExecuteAsync(
-                            DeleteAllForBookRequestSql,
+                        await conn.ExecuteAsync(Repository.DeleteAllForBookRequestSql,
                             new {bookRequest.UserId},
                             tx).ConfigureAwait(false);
 
-                        await conn.ExecuteAsync(
-                            AddAllForBookRequestSql,
+                        await conn.ExecuteAsync(Repository.AddAllForBookRequestSql,
                             bookRequest.Items,
                             tx).ConfigureAwait(false);
 

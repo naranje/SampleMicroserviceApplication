@@ -42,4 +42,6 @@ CREATE TABLE [dbo].[EventStore](
   [Content][nvarchar](max) NOT NULL
 )
 GO
+INSERT INTO [dbo].[BookRequest] ([UserId]) VALUES (1)
+GO
 
